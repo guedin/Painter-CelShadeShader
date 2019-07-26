@@ -1,8 +1,6 @@
 import lib-sampler.glsl
 import lib-vectors.glsl
 
-const vec3 light_pos = vec3(10.0, 10.0, 10.0);
-
 //: param auto main_light
 uniform vec4 light_main;
 
@@ -14,6 +12,12 @@ uniform SamplerSparse curvature_tex;
 
 //: param auto texture_position
 uniform SamplerSparse position_tex;
+
+//: param auto channel_user0
+uniform SamplerSparse shadow_tex;
+
+//: param auto channel_ao
+uniform SamplerSparse custom_ao_tex;
 
 //: param custom {
 //:  "default": 0.4,
@@ -44,7 +48,6 @@ void shade(V2F inputs)
   LocalVectors vectors = computeLocalFrame(inputs);
   vec3 V = vectors.eye;
   vec3 N = vectors.normal;
-  // vec3 L = normalize(light_pos - inputs.position);
   vec3 L = vec3(light_main);
   float NdV = dot(N, V);
   float NdL = max(0.0, dot(N, L));
@@ -56,15 +59,11 @@ void shade(V2F inputs)
     return;
   }
   vec3 color = getBaseColor(basecolor_tex, inputs.sparse_coord);
-  if (NdL > 0.75) {
-    color = color;
-  } else if (NdL > 0.5) {
-    color = color * 0.5;
-  } else if (NdL > 0.1) {
-    color = color * 0.1;
+  vec3 shadow = textureSparse(shadow_tex, inputs.sparse_coord).rgb;
+  float ao = textureSparse(custom_ao_tex, inputs.sparse_coord).r;
+  if (NdL * ao < 0.5) {
+    color = color * shadow;
   }
-  else
-    color = vec3(0.0);
 
   diffuseShadingOutput(color);
 }
