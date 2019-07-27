@@ -71,18 +71,14 @@ void shade(V2F inputs)
 
   // Highlight Management
   float highlightMask = 0.0;
-  if (roughness > 0.1)
+  if (roughness < .95)
   {
-    // Remap the Roughness from 0.1 - 1 to 0 - 1
-    roughness = (roughness - 0.1) * (1 / (1 - 0.1));
-
     vec3 reflection = normalize(V + L);
     float highlightsRaw = pow(dot(N, reflection), 10);
     highlightMask = float( highlightsRaw > (1 - roughness));
     // color += highlightMask;
-    color = mix(color + highlightMask, color, pow(roughness, 0.8));
+    color = min(mix(color + highlightMask, color, pow(roughness, 1.5)), vec3(1));
   }
-
   diffuseShadingOutput(color);
   //diffuseShadingOutput(vec3(highlightMask));
 }
