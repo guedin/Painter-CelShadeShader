@@ -76,7 +76,7 @@ float HighlightMask(vec3 N, vec3 V, vec3 L, float roughness, float spec)
 {
   if (roughness > .05)
   {
-    if (spec < 0.5)
+    if (spec < 0.5 || spec > 0.75)
     {
       vec3 reflection = normalize(V + L);
       float highlightsRaw = pow(dot(N, reflection), 5);
@@ -109,7 +109,7 @@ void shade(V2F inputs)
 
   float highlightMask = 0.0;
   // First band
-  if (metallic < 0.5)
+  if (spec < 0.75)
   {
     if (NdL * ao < threshold) 
     {
