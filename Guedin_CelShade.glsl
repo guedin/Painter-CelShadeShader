@@ -107,7 +107,7 @@ void shade(V2F inputs)
   float metallic = textureSparse(metallic_tex, inputs.sparse_coord).r;
   float spec = textureSparse(spec_tex, inputs.sparse_coord).r;
 
-   float highlightMask = 0.0;
+  float highlightMask = 0.0;
   // First band
   if (metallic < 0.5)
   {
@@ -156,10 +156,7 @@ void shade(V2F inputs)
     {
       color = baseColor * shadow * 0.3;
     }
-
   }
-
-  // float aniso = CSHairHighlightMask(N, V, roughness, 0.01, 1, 0.5, 3);
 
   diffuseShadingOutput(color);
   //diffuseShadingOutput(vec3(NdV));
